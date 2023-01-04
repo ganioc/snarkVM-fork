@@ -153,6 +153,8 @@ pub fn msm<Affine, Projective, Scalar>(points: &[Affine], scalars: &[Scalar]) ->
     }
     #[allow(clippy::uninit_assumed_init)]
     let mut ret: Projective = unsafe { std::mem::MaybeUninit::uninit().assume_init() };
+    // println!("Into cuda snarkvm_msm");
+
     let err = unsafe {
         snarkvm_msm(
             &mut ret as *mut _ as *mut c_void,

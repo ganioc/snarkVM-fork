@@ -59,6 +59,7 @@ version = "0.9.9"
 [dependencies.snarkvm-algorithms]
 path = "../algorithms"
 version = "0.9.9"
+features = ["cuda"]
 
 [dependencies.snarkvm-curves]
 path = "../curves"

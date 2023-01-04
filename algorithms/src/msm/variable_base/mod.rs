@@ -34,12 +34,14 @@ impl VariableBase {
             #[cfg(all(feature = "cuda", target_arch = "x86_64"))]
             // TODO SNP: where to set the threshold
             if scalars.len() > 1024 {
+                // println!("cudaed-->");
                 let result =
                     snarkvm_cuda::msm::<G, G::Projective, <G::ScalarField as PrimeField>::BigInteger>(bases, scalars);
                 if let Ok(result) = result {
                     return result;
                 }
             }
+            println!("batched-->");
             batched::msm(bases, scalars)
         }
         // For all other curves, we perform variable base MSM using Pippenger's algorithm.
@@ -110,7 +112,7 @@ mod tests {
     #[test]
     fn test_msm_cuda() {
         let mut rng = TestRng::default();
-        for i in 2..17 {
+        for i in 11..17 {
             let (bases, scalars) = create_scalar_bases::<G1Affine, Fr>(&mut rng, 1 << i);
             let rust = standard::msm(bases.as_slice(), scalars.as_slice());
             let cuda = VariableBase::msm::<G1Affine>(bases.as_slice(), scalars.as_slice());

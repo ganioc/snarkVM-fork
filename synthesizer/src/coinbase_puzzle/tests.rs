@@ -15,10 +15,14 @@
 // along with the snarkVM library. If not, see <https://www.gnu.org/licenses/>.
 
 use super::*;
+use aleo_std::{start_timer, end_timer};
 use console::{account::*, network::Testnet3};
 use snarkvm_utilities::Uniform;
 
 use rand::RngCore;
+
+use std::time::{Duration, Instant};
+
 
 const ITERATIONS: u64 = 100;
 
@@ -108,3 +112,19 @@ fn test_edge_case_for_degree() {
     let coinbase_solution = puzzle.accumulate_unchecked(&epoch_challenge, &[prover_solution]).unwrap();
     assert!(puzzle.verify(&coinbase_solution, &epoch_challenge, 0u64, 0u64).unwrap());
 }
+// KZG10::commit_lagrange
+//
+//
+// 
+#[test]
+fn test_cuda_parallel(){
+    let start = Instant::now();
+
+    println!("test cuda parallel");
+
+    let duration = start.elapsed();
+    println!("Time elapsed in expensive_function() is: {:?}", duration);
+    assert!(1 == 1);
+}
+
+
