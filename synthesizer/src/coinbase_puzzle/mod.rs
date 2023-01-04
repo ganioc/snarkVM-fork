@@ -158,6 +158,23 @@ impl<N: Network> CoinbasePuzzle<N> {
         Ok(ProverSolution::new(partial_solution, proof))
     }
 
+    pub fn prove_tst<>(
+        &self,
+        epoch_challenge: &EpochChallenge<N>,
+        address: Address<N>,
+        nonce: u64,
+        minimum_proof_target: Option<u64>,
+    ) {
+
+        let polynomial= Self::prover_polynomial(epoch_challenge, address, nonce).unwrap();
+
+        println!("polynomial degree: {}", polynomial.degree());
+        for element in polynomial.coeffs.iter() {
+            println!("{}", element);
+        }
+        
+    }
+
     /// Returns a coinbase solution for the given epoch challenge and prover solutions.
     ///
     /// # Note

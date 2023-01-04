@@ -127,4 +127,32 @@ fn test_cuda_parallel(){
     assert!(1 == 1);
 }
 
+#[test]
+fn test_polynomial(){
+    println!("test_polynomial()");
+    let mut rng = TestRng::default();
+
+    let max_degree = 1 << 15;
+    let max_config = PuzzleConfig { degree: max_degree };
+    let srs = CoinbasePuzzle::<Testnet3>::setup(max_config).unwrap();
+
+    let log_degree = 13;
+
+    let degree = (1 << log_degree) - 1;
+    let config = PuzzleConfig { degree };
+    let puzzle = CoinbasePuzzle::<Testnet3>::trim(&srs, config).unwrap();
+    let epoch_challenge = EpochChallenge::new(rng.next_u32(), Default::default(), degree).unwrap();
+
+    let private_key = PrivateKey::<Testnet3>::new(&mut rng).unwrap();
+    let address = Address::try_from(private_key).unwrap();
+    let nonce = u64::rand(&mut rng);
+
+    puzzle.prove_tst(&epoch_challenge, address, nonce, None);
+    // let proof_target = solution.to_target().unwrap();
+    // let polynomial = puzzle.my_prover_polynomial(epoch_challenge, address, nonce);
+
+
+    assert!(1 == 1);
+}
+
 
