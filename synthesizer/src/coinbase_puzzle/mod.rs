@@ -56,6 +56,9 @@ impl<N: Network> CoinbasePuzzle<N> {
     pub fn setup(config: PuzzleConfig) -> Result<SRS<N::PairingCurve>> {
         // The SRS must support committing to the product of two degree `n` polynomials.
         // Thus, the SRS must support committing to a polynomial of degree `2n - 1`.
+        // added by Yango3
+        println!("CoinbasePuzzle::setup()");
+
         let total_degree = (2 * config.degree - 1).try_into()?;
         let srs = KZG10::load_srs(total_degree)?;
         Ok(srs)
@@ -76,12 +79,24 @@ impl<N: Network> CoinbasePuzzle<N> {
         // Since the upper bound to `srs.powers_of_beta_g` takes as input the number
         // of coefficients. The degree of the product has `2n - 1` coefficients.
         //
+        println!("CoinbasePuzzle.trim()");
+
         // Hence, we request the powers of beta for the interval [0, 2n].
         let product_domain = Self::product_domain(config.degree)?;
 
         let lagrange_basis_at_beta_g = srs.lagrange_basis(product_domain)?;
+
+        println!("lagrange_basis_at_beta_g: {:?}", lagrange_basis_at_beta_g);
+
         let fft_precomputation = product_domain.precompute_fft();
+
+        println!("fft_precomputation: {:?}", fft_precomputation);
+
         let product_domain_elements = product_domain.elements().collect();
+
+        
+
+        println!("product_domain_elements: {:?}", product_domain_elements);
 
         let vk = CoinbaseVerifyingKey::<N> {
             g: srs.power_of_beta_g(0)?,
@@ -381,14 +396,29 @@ impl<N: Network> CoinbasePuzzle<N> {
     pub(crate) fn product_domain(degree: u32) -> Result<EvaluationDomain<N::Field>> {
         ensure!(degree != 0, "Degree cannot be zero");
         let num_coefficients = degree.checked_add(1).ok_or_else(|| anyhow!("Degree is too large"))?;
+
+        println!("CoinbasePuzzle::product_domain()");
+        // Added by Yango3
+        println!("num_coefficients: {}", num_coefficients);
+
         let product_num_coefficients = num_coefficients
             .checked_mul(2)
             .and_then(|t| t.checked_sub(1))
             .ok_or_else(|| anyhow!("Degree is too large"))?;
         assert_eq!(product_num_coefficients, 2 * degree + 1);
+
+        // Added by Yango3,
+        println!("product_num_coefficients: {}", product_num_coefficients);
+
         let product_domain =
-            EvaluationDomain::new(product_num_coefficients.try_into()?).ok_or_else(|| anyhow!("Invalid degree"))?;
+            EvaluationDomain::<<N::PairingCurve as PairingEngine>::Fr>::new(product_num_coefficients.try_into()?).ok_or_else(|| anyhow!("Invalid degree"))?;
+            
         assert_eq!(product_domain.size(), (product_num_coefficients as usize).checked_next_power_of_two().unwrap());
+
+        // Added by Yango3
+        println!("product_domain, size(): {:?}", product_domain.size());
+        println!("product_domain, count(): {}", product_domain.elements().count());
+
         Ok(product_domain)
     }
 

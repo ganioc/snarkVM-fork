@@ -41,6 +41,13 @@ impl<N: Network> EpochChallenge<N> {
 
         let product_domain = CoinbasePuzzle::<N>::product_domain(degree)?;
 
+        // Add by Yango3
+        println!("EpochChallenge.new, product_domain: {:?}", product_domain);
+
+        let product_domain_elements = product_domain;
+
+        println!("product_domain_elements: {:?}", product_domain_elements);
+
         let epoch_polynomial = hash_to_polynomial::<<N::PairingCurve as PairingEngine>::Fr>(&input, degree);
         ensure!(u32::try_from(epoch_polynomial.degree()).is_ok(), "Degree is too large");
 

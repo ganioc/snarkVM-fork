@@ -144,7 +144,9 @@ fn test_polynomial(){
     // let epoch_block_hash = "ab1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5g436j";
     // let epoch_challenge = EpochChallenge::new(epoch_number, Default::default(), degree).unwrap();
     // default value is data , F::zero()
-    let epoch_challenge = EpochChallenge::<Testnet3>::new(epoch_number,Default::default() , degree).unwrap();
+
+    println!("Begin EpochChallenge::new()");
+    let epoch_challenge = EpochChallenge::new(epoch_number,Default::default() , degree).unwrap();
     // 这里会生成一个product_domain, 使用到的算法，和后续是一样的!
 
     println!("epoch_number: {:#X}", epoch_challenge.epoch_number());
