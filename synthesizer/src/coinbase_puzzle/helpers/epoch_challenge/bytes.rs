@@ -62,6 +62,8 @@ mod tests {
             let degree: u16 = rng.gen(); // Bound the maximal test degree to 2^16.
             let expected = EpochChallenge::<CurrentNetwork>::new(rng.next_u32(), rng.gen(), degree as u32).unwrap();
 
+            println!("block_hash : {}", expected.epoch_block_hash());
+
             // Check the byte representation.
             let expected_bytes = expected.to_bytes_le().unwrap();
             let candidate = EpochChallenge::read_le(&expected_bytes[..]).unwrap();

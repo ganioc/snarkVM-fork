@@ -170,7 +170,7 @@ impl<N: Network> CoinbasePuzzle<N> {
 
         println!("polynomial degree: {}", polynomial.degree());
         for element in polynomial.coeffs.iter() {
-            println!("{}", element);
+            println!("{}, ", element);
         }
         
     }

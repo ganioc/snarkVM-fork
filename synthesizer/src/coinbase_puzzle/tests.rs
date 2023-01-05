@@ -130,22 +130,37 @@ fn test_cuda_parallel(){
 #[test]
 fn test_polynomial(){
     println!("test_polynomial()");
-    let mut rng = TestRng::default();
+    // let mut rng = TestRng::default();
 
     let max_degree = 1 << 15;
     let max_config = PuzzleConfig { degree: max_degree };
     let srs = CoinbasePuzzle::<Testnet3>::setup(max_config).unwrap();
 
-    let log_degree = 13;
-
+    let log_degree = 2;
     let degree = (1 << log_degree) - 1;
     let config = PuzzleConfig { degree };
     let puzzle = CoinbasePuzzle::<Testnet3>::trim(&srs, config).unwrap();
-    let epoch_challenge = EpochChallenge::new(rng.next_u32(), Default::default(), degree).unwrap();
+    let epoch_number =  0x11ABAEAA;
+    // let epoch_block_hash = "ab1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq5g436j";
+    // let epoch_challenge = EpochChallenge::new(epoch_number, Default::default(), degree).unwrap();
+    // default value is data , F::zero()
+    let epoch_challenge = EpochChallenge::<Testnet3>::new(epoch_number,Default::default() , degree).unwrap();
+    // 这里会生成一个product_domain, 使用到的算法，和后续是一样的!
 
-    let private_key = PrivateKey::<Testnet3>::new(&mut rng).unwrap();
+    println!("epoch_number: {:#X}", epoch_challenge.epoch_number());
+    println!("epoch_block_hash: {}", epoch_challenge.epoch_block_hash());
+    println!("epoch_polynomial: {:?}", epoch_challenge.epoch_polynomial());
+    println!("epoch_polynomail_evaluations: {:?}", epoch_challenge.epoch_polynomial_evaluations());
+
+    // let private_key = PrivateKey::<Testnet3>::new(&mut rng).unwrap();
+    let private_key = PrivateKey::<Testnet3>::from_str("APrivateKey1zkp686TthAY2rhCzhLwDZEeYkxA33vNwC2yB8va7FDP6yEM").unwrap();
+    //let private_key = "APrivateKey1zkp686TthAY2rhCzhLwDZEeYkxA33vNwC2yB8va7FDP6yEM";
+    println!("private_key: {}", private_key);
     let address = Address::try_from(private_key).unwrap();
-    let nonce = u64::rand(&mut rng);
+    println!("address: {}", address);
+    //let nonce = u64::rand(&mut rng);
+    let nonce: u64 = 0x11110000;
+    println!("nonce: {:#X}", nonce);
 
     puzzle.prove_tst(&epoch_challenge, address, nonce, None);
     // let proof_target = solution.to_target().unwrap();
