@@ -410,14 +410,25 @@ impl<N: Network> CoinbasePuzzle<N> {
         // Added by Yango3,
         println!("product_num_coefficients: {}", product_num_coefficients);
 
+        // let product_domain =
+        //     EvaluationDomain::<<N::PairingCurve as PairingEngine>::Fr>::new(product_num_coefficients.try_into()?).ok_or_else(|| anyhow!("Invalid degree"))?;
+
         let product_domain =
-            EvaluationDomain::<<N::PairingCurve as PairingEngine>::Fr>::new(product_num_coefficients.try_into()?).ok_or_else(|| anyhow!("Invalid degree"))?;
+            EvaluationDomain::<<N::PairingCurve as PairingEngine>::Fr>::new(product_num_coefficients as usize).unwrap();
             
         assert_eq!(product_domain.size(), (product_num_coefficients as usize).checked_next_power_of_two().unwrap());
 
         // Added by Yango3
         println!("product_domain, size(): {:?}", product_domain.size());
-        println!("product_domain, count(): {}", product_domain.elements().count());
+        println!("product_domain, count(): {:?}", product_domain.elements().count());
+
+        // Loop Elements,
+        // iterator,
+        println!("loop over product_domain");
+        for ele in product_domain.elements(){
+            println!("{:?}", ele);
+        }
+
 
         Ok(product_domain)
     }
