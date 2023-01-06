@@ -164,10 +164,14 @@ fn test_polynomial(){
     let nonce: u64 = 0x11110000;
     println!("nonce: {:#X}", nonce);
 
-    puzzle.prove_tst(&epoch_challenge, address, nonce, None);
+    // let polynomial = puzzle.prover_polynomial(epoch_challenge, address, nonce).unwrap();
+    let polynomial = puzzle.prove_tst(&epoch_challenge, address, nonce, None).unwrap();
     // let proof_target = solution.to_target().unwrap();
     // let polynomial = puzzle.my_prover_polynomial(epoch_challenge, address, nonce);
-
+    println!("polynomial degree: {}", polynomial.degree());
+    for element in polynomial.coeffs.iter() {
+        println!("{}, ", element);
+    }
 
     assert!(1 == 1);
 }

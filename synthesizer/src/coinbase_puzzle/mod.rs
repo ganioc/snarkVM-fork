@@ -94,8 +94,6 @@ impl<N: Network> CoinbasePuzzle<N> {
 
         let product_domain_elements = product_domain.elements().collect();
 
-        
-
         println!("product_domain_elements: {:?}", product_domain_elements);
 
         let vk = CoinbaseVerifyingKey::<N> {
@@ -179,15 +177,15 @@ impl<N: Network> CoinbasePuzzle<N> {
         address: Address<N>,
         nonce: u64,
         minimum_proof_target: Option<u64>,
-    ) {
+    ) -> Result<DensePolynomial<<N::PairingCurve as PairingEngine>::Fr>> {
 
-        let polynomial= Self::prover_polynomial(epoch_challenge, address, nonce).unwrap();
+        let polynomial= Self::prover_polynomial(epoch_challenge, address, nonce);
 
-        println!("polynomial degree: {}", polynomial.degree());
-        for element in polynomial.coeffs.iter() {
-            println!("{}, ", element);
-        }
-        
+        // println!("polynomial degree: {}", polynomial.degree());
+        // for element in polynomial.coeffs.iter() {
+        //     println!("{}, ", element);
+        // }
+        polynomial
     }
 
     /// Returns a coinbase solution for the given epoch challenge and prover solutions.
