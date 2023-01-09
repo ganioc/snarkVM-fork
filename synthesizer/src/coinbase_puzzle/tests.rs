@@ -173,7 +173,65 @@ fn test_polynomial(){
         println!("{}, ", element);
     }
 
+    let pk = puzzle.coinbase_proving_key().unwrap();
+
+    println!("pk.fft_precomputation: {:?}", pk.fft_precomputation);
+
+    let polynomial_evaluations = pk.product_domain.in_order_fft_with_pc(&polynomial, &pk.fft_precomputation);
+    println!("polynomial_evaluations: {:?}", polynomial_evaluations);
+
+    println!("epoch challenge.evaluations: {:?}", epoch_challenge.epoch_polynomial_evaluations().evaluations);
+
+    let product_evaluations = pk.product_domain.mul_polynomials_in_evaluation_domain(
+        &polynomial_evaluations,
+        &epoch_challenge.epoch_polynomial_evaluations().evaluations,
+    );
+
+    println!("product_evaluations: {:?}", product_evaluations);
+
+
     assert!(1 == 1);
 }
 
 
+#[test]
+fn test_blake2b512(){
+    println!("test_blake2b512()");
+    let max_degree = 1 << 15;
+    let max_config = PuzzleConfig { degree: max_degree };
+    let srs = CoinbasePuzzle::<Testnet3>::setup(max_config).unwrap();
+
+    let log_degree = 2;
+    let degree = (1 << log_degree) - 1;
+    let config = PuzzleConfig { degree };
+    let puzzle = CoinbasePuzzle::<Testnet3>::trim(&srs, config).unwrap();
+    let epoch_number =  0x11ABAEAA;
+
+ 
+    let epoch_challenge = EpochChallenge::<Testnet3>::new(epoch_number,Default::default() , degree).unwrap();
+
+    println!("epoch_number: {:#X}", epoch_challenge.epoch_number());
+    println!("epoch_block_hash: {}", epoch_challenge.epoch_block_hash());
+    println!("epoch_polynomial: {:?}", epoch_challenge.epoch_polynomial());
+    println!("epoch_polynomail_evaluations: {:?}", epoch_challenge.epoch_polynomial_evaluations());
+    
+    let private_key = PrivateKey::<Testnet3>::from_str("APrivateKey1zkp686TthAY2rhCzhLwDZEeYkxA33vNwC2yB8va7FDP6yEM").unwrap();
+    //let private_key = "APrivateKey1zkp686TthAY2rhCzhLwDZEeYkxA33vNwC2yB8va7FDP6yEM";
+    println!("private_key: {}", private_key);
+    let address = Address::try_from(private_key).unwrap();
+    println!("address: {}", address);
+    //let nonce = u64::rand(&mut rng);
+    let nonce: u64 = 0x11110000;
+    println!("nonce: {:#X}", nonce);
+
+    // let input = {
+    //     let mut bytes = [0u8; 76];
+    //     bytes[..4].copy_from_slice(&epoch_challenge.epoch_number().to_bytes_le()?);
+    //     bytes[4..36].copy_from_slice(&epoch_challenge.epoch_block_hash().to_bytes_le());
+    //     bytes[36..68].copy_from_slice(&address.to_bytes_le()?);
+    //     bytes[68..].copy_from_slice(&nonce.to_le_bytes());
+    //     bytes
+    // };
+
+    assert_eq!(1,1);
+}
