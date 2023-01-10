@@ -16,13 +16,14 @@
 
 use super::*;
 use aleo_std::{start_timer, end_timer};
-use console::{account::*, network::Testnet3};
+use console::{account::*, network::Testnet3, prelude::cfg_into_iter};
 use snarkvm_utilities::Uniform;
 
 use rand::RngCore;
 
 use std::time::{Duration, Instant};
 
+use blake2::Digest;
 
 const ITERATIONS: u64 = 100;
 
@@ -224,14 +225,53 @@ fn test_blake2b512(){
     let nonce: u64 = 0x11110000;
     println!("nonce: {:#X}", nonce);
 
-    // let input = {
-    //     let mut bytes = [0u8; 76];
-    //     bytes[..4].copy_from_slice(&epoch_challenge.epoch_number().to_bytes_le()?);
-    //     bytes[4..36].copy_from_slice(&epoch_challenge.epoch_block_hash().to_bytes_le());
-    //     bytes[36..68].copy_from_slice(&address.to_bytes_le()?);
-    //     bytes[68..].copy_from_slice(&nonce.to_le_bytes());
-    //     bytes
-    // };
+    let mut bytes = [0u8; 76];
+    bytes[..4].copy_from_slice(&epoch_challenge.epoch_number().to_bytes_le().unwrap());
+    bytes[4..36].copy_from_slice(&epoch_challenge.epoch_block_hash().to_bytes_le().unwrap());
+    bytes[36..68].copy_from_slice(&address.to_bytes_le().unwrap());
+    bytes[68..].copy_from_slice(&nonce.to_le_bytes());
+    
+    // Hash the input.
+    let hash = blake2::Blake2s256::digest(bytes);
+
+    println!("1st hash: {:?}", hash);
+    for i in 0..hash.len(){
+        print!("{:#X} ", hash[i]);
+    }
+    println!("\n1st hash in Hex\n");
+    // <<N::PairingCurve as PairingEngine>::Fr>
+
+    // let iters: Vec<_> = cfg_into_iter!(0..16)
+    //     .map(|counter| {
+    //         println!("counter: {}", counter);
+    //         counter
+    //     }).collect();
+    // println!("iters: {:?}", iters);
+
+    for  c in 0..16{
+        let cter: u32 = c;
+        println!("== {} ==", cter);
+        let mut input_with_counter = [0u8; 36];
+        input_with_counter[..32].copy_from_slice(&hash);
+        println!("cter to_le_bytes: {:?}", cter.to_le_bytes());
+        input_with_counter[32..].copy_from_slice(&cter.to_le_bytes());
+
+        println!("input with counter len(): {}", input_with_counter.len());
+
+        println!("input to blake2b512");
+        for i in 0..input_with_counter.len(){
+            print!("{:#X} ", input_with_counter[i]);
+        }
+        
+        let hash2 = blake2::Blake2b512::digest(input_with_counter);
+        println!("\nhash2 out:");
+        println!("{:?}", hash2);
+
+        for i in 0..hash2.len(){
+            print!("{:#X} ", hash2[i]);
+        }
+        println!("\n-----");
+    }
 
     assert_eq!(1,1);
 }
