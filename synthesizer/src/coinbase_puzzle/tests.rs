@@ -20,9 +20,12 @@ use console::{account::*, network::Testnet3, prelude::cfg_into_iter};
 use snarkvm_utilities::ToBytes;
 use snarkvm_utilities::Uniform;
 use snarkvm_utilities::BigInteger256;
+use snarkvm_curves::bls12_377::Fr;
+use snarkvm_fields::PrimeField;
 
 use rand::RngCore;
 
+use std::ops::Add;
 use std::time::{Duration, Instant};
 
 use blake2::Digest;
@@ -298,6 +301,10 @@ fn test_from_bytes_le(){
     assert_eq!(1,1);
 }
 
+fn check_fr_ops< F: PrimeField>( a: F) -> F{
+    a*a
+}
+
 #[test]
 fn test_big_integer(){
     let a = BigInteger256::new([1,2,3,4]);
@@ -375,6 +382,19 @@ fn test_big_integer(){
     for i in bi3.0.iter() {
         println!("{} {:0X}", i, *i);
     }
+
+    let mut fp1  = Fr::from_bigint(B1).unwrap();
+    // println!("fp1 normal: {}", fp1.ok_or(err).unwrap());
+    println!("fp1: {:?}", fp1);
+    // fp1.AddAssign(1);
+    // fp1.add(1); 不能加integer,
+    // println!("fp1 size in bits {}", fp1.size_in_bits());
+    // fp1 + 2;
+    println!("fp1 is zero? {}", fp1.is_zero());
+    let zero =  Fr::zero();
+    println!("fp zero: {:?}", zero);
+    println!("fp1*fp1 : {:?}", check_fr_ops(fp1));
+
 
     assert_eq!(1,1);
 }
