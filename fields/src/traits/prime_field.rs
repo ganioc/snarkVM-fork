@@ -99,7 +99,7 @@ pub trait PrimeField:
         println!("bytes_to_directyl_convert: {:?}", bytes_to_directly_convert);
         // Guaranteed to not be None, as the input is less than the modulus size.
         let mut res = Self::from_random_bytes(&bytes_to_directly_convert).unwrap();
-        println!("res: {:?}", res);
+        println!("res from_random_bytes: {:?}", res);
 
         // Update the result, byte by byte.
         // We go through existing field arithmetic, which handles the reduction.

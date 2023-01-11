@@ -266,16 +266,22 @@ macro_rules! impl_primefield_serializer {
                 if F::BIT_SIZE > 8 {
                     return Err(SerializationError::NotEnoughSpace);
                 }
+                println!("F::BIT_SIZE: {}", F::BIT_SIZE);
+
                 // Calculate the number of bytes required to represent a field element
                 // serialized with `flags`. If `F::BIT_SIZE < 8`,
                 // this is at most `$byte_size + 1`
                 let output_byte_size = Self::SERIALIZED_SIZE;
+                println!("output_byte_size: {}", output_byte_size);
 
                 let mut masked_bytes = [0; $byte_size + 1];
+                println!("masked_bytes: {:?}", masked_bytes);
                 reader.read_exact(&mut masked_bytes[..output_byte_size])?;
-
+                // println!("reader: {:?}", reader);
+                println!("masked_bytes after read_exact: {:?}", masked_bytes);
                 let flags = F::from_u8_remove_flags(&mut masked_bytes[output_byte_size - 1])
                     .ok_or(SerializationError::UnexpectedFlags)?;
+                // println!("flags: {:?}", flags.unwrap());
 
                 Ok((Self::read_le(&masked_bytes[..])?, flags))
             }
@@ -304,6 +310,7 @@ macro_rules! impl_primefield_serializer {
                 _validate: snarkvm_utilities::serialize::Validate,
             ) -> Result<Self, snarkvm_utilities::SerializationError> {
                 use snarkvm_utilities::serialize::EmptyFlags;
+                println!("deserialize_with_mode()");
                 Self::deserialize_with_flags::<R, EmptyFlags>(reader).map(|(r, _)| r)
             }
         }
@@ -426,11 +433,10 @@ macro_rules! impl_field_from_random_bytes_with_flags {
 
                     // println!("F::from_u8: {:?}", F::from_u8(flags).map(|flag| flag));
 
-                    let result = Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
-                    .ok()
-                    .and_then(|f| F::from_u8(flags).map(|flag| (f, flag)));
+                    // let result = Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
+                    // .ok()
+                    // .and_then(|f| F::from_u8(flags).map(|flag| (f, flag)));
                     
-
 
                     Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
                         .ok()

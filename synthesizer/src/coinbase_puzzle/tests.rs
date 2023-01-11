@@ -17,13 +17,18 @@
 use super::*;
 use aleo_std::{start_timer, end_timer};
 use console::{account::*, network::Testnet3, prelude::cfg_into_iter};
+use snarkvm_utilities::ToBytes;
 use snarkvm_utilities::Uniform;
+use snarkvm_utilities::BigInteger256;
 
 use rand::RngCore;
 
 use std::time::{Duration, Instant};
 
 use blake2::Digest;
+
+use num_bigint::BigUint;
+
 
 const ITERATIONS: u64 = 100;
 
@@ -288,7 +293,88 @@ fn test_from_bytes_le(){
     let data0 = CoinbasePuzzle::<Testnet3>::from_bytes_le(input0);
     println!("[data0]: {:?}", data0);
     // println!("[data0 hex]: {:#X}", data0);
-    println!("BigInteger: {:?}", data0.0);
+    println!("BigInteger: {}", data0.0);
+
+    assert_eq!(1,1);
+}
+
+#[test]
+fn test_big_integer(){
+    let a = BigInteger256::new([1,2,3,4]);
+    let arr = [123, 174, 25, 145, 165, 178, 187, 228, 35, 59, 182, 54, 166, 157, 152, 46, 247, 3, 224, 72, 183, 251, 215, 241, 221, 153, 177, 207, 200, 102, 161, 0, 0];
+    let arr2= [123, 174, 25, 145, 165, 178, 187, 228, 35, 59, 182, 54, 166, 157, 152, 46, 247, 3, 224, 72, 183, 251, 215, 241, 221, 153, 177, 207, 200, 102, 161, 0];
+
+    println!("a normal: {}", a);
+    println!("a: {:?}", a);
+
+    let bits = a.to_bits_le();
+    println!("bits: {:?}", bits);
+
+    let bytes = a.to_bytes_le();
+    println!("bytes: {:?}", bytes);
+
+    // let bignum : BigInteger256;
+    // bignum::read_le(arr);
+    // println!("bignum: {:?}", bignum);
+    let b1 = BigUint::from_bytes_le(&arr2);
+    println!("b1: {}", b1);
+    // 出来了，很繁琐
+    // 285171769418731151440234228452879219617491821202864546061759527540707929723
+
+    println!("test biguint:");
+    let arr3: [u8;8] = [0x10, 0x00, 0x02, 0x00, 0x02, 0x01, 0x03, 0x00,
+    
+    ];
+    let b2 = BigUint::from_bytes_le(&arr3);
+    println!("b2: {}", b2);
+    println!("b2: {:016X}",b2);
+    // println!("b2: {:016X}", b2.0);
+    // println!("b2: {:016X}", b2.1);
+    // println!("b2: {:016X}", b2.2);
+    // println!("b2: {:016X}", b2.3);
+
+
+    println!("arr2 in Hex");
+    for i in 0..arr2.len(){
+        if (i%8) == 0 && i != 0 {
+            println!("");
+        }
+        print!("{:02X} ", arr2[i]);
+    }
+    println!("");
+    println!("arr2 in Hex Reverse order");
+    for j in 0..arr2.len(){
+        if (j%8) == 0 && j != 0 {
+            println!("");
+        }
+        print!("{:02X} ", arr2[31 - j]);
+    }
+    println!("");
+
+    let B1 =  BigInteger256::new([
+        0xE4BBB2A59119AE7B,
+        0x2E989DA636B63B23 ,
+        0xF1D7FBB748E003F7,
+        0x00A166C8CFB199DD ]);
+    println!("B1 normal : {}", B1);
+    println!("B1 : {:?}", B1);
+
+    let biarr= [
+        0x7B, 0, 0, 0, 0, 0, 0, 0, 
+        1, 2, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0];
+    println!("\nbiarr: {}", BigUint::from_bytes_le(&biarr));
+    let bi3 = BigInteger256::new([
+        0x00000000_0000007B, 
+        0x00000000_00000201,
+        0x00000000_00000000,
+        0x00000000_00000000]);
+    println!("bi3: {}", bi3);
+    println!("bi3: {:?}", bi3);
+    for i in bi3.0.iter() {
+        println!("{} {:0X}", i, *i);
+    }
 
     assert_eq!(1,1);
 }

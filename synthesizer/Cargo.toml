@@ -46,6 +46,9 @@ cuda = [ "snarkvm-algorithms/cuda" ]
 setup = [ ]
 timer = [ "aleo-std/timer" ]
 
+[dependencies]
+num-bigint = "0.4.3"
+
 [dependencies.circuit]
 package = "snarkvm-circuit"
 path = "../circuit"
