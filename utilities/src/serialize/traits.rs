@@ -166,6 +166,8 @@ pub trait CanonicalDeserialize: Valid {
     }
 
     fn deserialize_uncompressed<R: Read>(reader: R) -> Result<Self, SerializationError> {
+        // println!("deserialize_uncompressed");
+        
         Self::deserialize_with_mode(reader, Compress::No, Validate::Yes)
     }
 

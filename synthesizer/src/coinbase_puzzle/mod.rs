@@ -170,6 +170,10 @@ impl<N: Network> CoinbasePuzzle<N> {
 
         Ok(ProverSolution::new(partial_solution, proof))
     }
+ 
+    pub fn from_bytes_le(input: [u8;64])-> <N::PairingCurve as PairingEngine>::Fr{
+        hash_to_le(&input)
+    }
 
     pub fn prove_tst<>(
         &self,
@@ -437,6 +441,8 @@ impl<N: Network> CoinbasePuzzle<N> {
         address: Address<N>,
         nonce: u64,
     ) -> Result<DensePolynomial<<N::PairingCurve as PairingEngine>::Fr>> {
+        println!("prove_polynomial()");
+        
         let input = {
             let mut bytes = [0u8; 76];
             bytes[..4].copy_from_slice(&epoch_challenge.epoch_number().to_bytes_le()?);

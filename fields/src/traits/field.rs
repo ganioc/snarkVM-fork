@@ -168,6 +168,7 @@ pub trait Field:
     /// otherwise returns None. This function is primarily intended for sampling
     /// random field elements from a hash-function or RNG output.
     fn from_random_bytes(bytes: &[u8]) -> Option<Self> {
+        println!("from_random_bytes");
         Self::from_random_bytes_with_flags::<EmptyFlags>(bytes).map(|f| f.0)
     }
 

@@ -367,6 +367,9 @@ macro_rules! impl_field_from_random_bytes_with_flags {
     ($u64_limbs: expr) => {
         #[inline]
         fn from_random_bytes_with_flags<F: snarkvm_utilities::Flags>(bytes: &[u8]) -> Option<(Self, F)> {
+            println!("from_random_bytes_with_flags..");
+            println!("F::BIT_SIZE: {}", F::BIT_SIZE);
+
             (F::BIT_SIZE <= 8)
                 .then(|| {
                     let mut result_bytes = [0u8; $u64_limbs * 8 + 1];
@@ -374,26 +377,37 @@ macro_rules! impl_field_from_random_bytes_with_flags {
                     result_bytes.iter_mut().zip(bytes).for_each(|(result, input)| {
                         *result = *input;
                     });
+                    println!("result_bytes: {:?}", result_bytes);
+
                     // This mask retains everything in the last limb
                     // that is below `P::MODULUS_BITS`.
                     let last_limb_mask = (u64::MAX >> P::REPR_SHAVE_BITS).to_le_bytes();
+                    println!("last_limb_mask: {:?}", last_limb_mask);
                     let mut last_bytes_mask = [0u8; 9];
+                    println!("last_bytes_mask: {:?}", last_bytes_mask);
                     last_bytes_mask[..8].copy_from_slice(&last_limb_mask);
+                    println!("last_bytes_mast copy from: {:?}", last_bytes_mask);
 
                     // Length of the buffer containing the field element and the flag.
                     let output_byte_size = Self::SERIALIZED_SIZE;
                     // Location of the flag is the last byte of the serialized
                     // form of the field element.
                     let flag_location = output_byte_size - 1;
+                    println!("output_byte_size: {}", output_byte_size);
+                    println!("flag_location: {}", flag_location);
 
                     // At which byte is the flag located in the last limb?
                     let flag_location_in_last_limb = flag_location - (8 * ($u64_limbs - 1));
+                    println!("flag_location_in_last_limb: {}", flag_location_in_last_limb);
 
                     // Take all but the last 9 bytes.
                     let last_bytes = &mut result_bytes[8 * ($u64_limbs - 1)..];
+                    println!("last_bytes: {:?}", last_bytes);
 
                     // The mask only has the last `F::BIT_SIZE` bits set
                     let flags_mask = u8::MAX.checked_shl(8 - (F::BIT_SIZE as u32)).unwrap_or(0);
+                    println!("flags_mask: {}", flags_mask);
+
 
                     // Mask away the remaining bytes, and try to reconstruct the
                     // flag
@@ -404,9 +418,33 @@ macro_rules! impl_field_from_random_bytes_with_flags {
                         }
                         *b &= m;
                     }
+                    println!("flags: {}", flags);
+                    println!("result_bytes: {:?}", &result_bytes[..($u64_limbs * 8)]);
+
+                    let des_uncomp = Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)]);
+                    println!("des_uncomp: {:?}", des_uncomp);
+
+                    // println!("F::from_u8: {:?}", F::from_u8(flags).map(|flag| flag));
+
+                    let result = Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
+                    .ok()
+                    .and_then(|f| F::from_u8(flags).map(|flag| (f, flag)));
+                    
+
+
                     Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
                         .ok()
-                        .and_then(|f| F::from_u8(flags).map(|flag| (f, flag)))
+                        .and_then(|f| {
+                            println!("f: {:?}", f);
+                            F::from_u8(flags).map(|flag| {
+                                println!("f: {:?}", f);
+                                // println!("flag: {}", flag.to_le_bytes());
+                                // return f and EmptyFlag,
+                                (f, flag)
+                        })
+                        })
+                    
+                    
                 })
                 .flatten()
         }
