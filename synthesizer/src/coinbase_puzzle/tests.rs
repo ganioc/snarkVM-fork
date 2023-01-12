@@ -310,6 +310,11 @@ fn test_big_integer(){
     let a = BigInteger256::new([1,2,3,4]);
     let arr = [123, 174, 25, 145, 165, 178, 187, 228, 35, 59, 182, 54, 166, 157, 152, 46, 247, 3, 224, 72, 183, 251, 215, 241, 221, 153, 177, 207, 200, 102, 161, 0, 0];
     let arr2= [123, 174, 25, 145, 165, 178, 187, 228, 35, 59, 182, 54, 166, 157, 152, 46, 247, 3, 224, 72, 183, 251, 215, 241, 221, 153, 177, 207, 200, 102, 161, 0];
+    let remaining_bytes: [u8;33] = [
+        253, 252, 225, 26, 13, 49, 85, 104, 253, 236, 
+        19, 98, 4, 94, 217, 105, 11, 107, 242, 28, 
+        155, 248, 224, 20, 144, 41, 205, 131, 203, 238, 
+        95, 29, 139];
 
     println!("a normal: {}", a);
     println!("a: {:?}", a);
@@ -395,6 +400,15 @@ fn test_big_integer(){
     println!("fp zero: {:?}", zero);
     println!("fp1*fp1 : {:?}", check_fr_ops(fp1));
 
+    let window_size = Fr::from(256u64);
+    println!("window_size: {}", window_size);
+
+    for byte in remaining_bytes{
+        fp1 = fp1 * window_size;
+        fp1 = fp1 + Fr::from(byte);
+    }
+    println!("res at end: {}", fp1);
+    println!("res at end: {:?}", fp1);
 
     assert_eq!(1,1);
 }
