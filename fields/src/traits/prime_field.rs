@@ -15,7 +15,7 @@
 // along with the snarkVM library. If not, see <https://www.gnu.org/licenses/>.
 
 use crate::{FftField, FieldError, FieldParameters, PoseidonDefaultField};
-use snarkvm_utilities::{biginteger::BigInteger, cmp::min, str::FromStr};
+use snarkvm_utilities::{biginteger::BigInteger, cmp::min, str::FromStr, ToBytes, BigInteger256};
 
 /// The interface for a prime field.
 pub trait PrimeField:
@@ -97,14 +97,24 @@ pub trait PrimeField:
         let mut bytes_to_directly_convert = leading_bytes.to_vec();
         bytes_to_directly_convert.reverse();
         println!("bytes_to_directyl_convert: {:?}", bytes_to_directly_convert);
+        
         // Guaranteed to not be None, as the input is less than the modulus size.
         let mut res = Self::from_random_bytes(&bytes_to_directly_convert).unwrap();
         println!("res from_random_bytes: {:?}", res);
+        println!("res to_bytes_le, {:?}", res.to_bigint().to_bytes_le());
+        println!("res bigint 0: {:?}", res.to_bigint());
+        // let test_B = BigInteger256::from(res.to_bigint());
+
 
         // Update the result, byte by byte.
         // We go through existing field arithmetic, which handles the reduction.
         let window_size = Self::from(256u64);
         println!("window_size: {}", window_size);
+        println!("u64:");
+        println!("0, {:?}", window_size.to_bigint().to_bytes_le());
+        // println!("1, {}", window_size.to_bigint());
+        // println!("2, {}", window_size.to_bigint());
+        // println!("3, {}", window_size.to_bigint());
 
         for byte in remaining_bytes{
             print!("{:?} ", Self::from(*byte));
@@ -117,6 +127,7 @@ pub trait PrimeField:
             res += Self::from(*byte);
         }
         println!("res at end: {:?}", res);
+        println!("res at end to bytes: {:?}", res.to_bigint().to_bytes_le());
         res
     }
 

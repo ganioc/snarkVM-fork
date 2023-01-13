@@ -17,6 +17,7 @@
 use super::*;
 use aleo_std::{start_timer, end_timer};
 use console::{account::*, network::Testnet3, prelude::cfg_into_iter};
+use snarkvm_utilities::BigInteger;
 use snarkvm_utilities::ToBytes;
 use snarkvm_utilities::Uniform;
 use snarkvm_utilities::BigInteger256;
@@ -296,7 +297,7 @@ fn test_from_bytes_le(){
     let data0 = CoinbasePuzzle::<Testnet3>::from_bytes_le(input0);
     println!("[data0]: {:?}", data0);
     // println!("[data0 hex]: {:#X}", data0);
-    println!("BigInteger: {}", data0.0);
+    println!("BigInteger: {:?}", data0.0);
 
     assert_eq!(1,1);
 }
@@ -353,6 +354,10 @@ fn test_big_integer(){
         }
         print!("{:02X} ", arr2[i]);
     }
+    //7B AE 19 91 A5 B2 BB E4 
+    //23 3B B6 36 A6 9D 98 2E 
+    //F7 03 E0 48 B7 FB D7 F1 
+    //DD 99 B1 CF C8 66 A1 00
     println!("");
     println!("arr2 in Hex Reverse order");
     for j in 0..arr2.len(){
@@ -364,10 +369,10 @@ fn test_big_integer(){
     println!("");
 
     let B1 =  BigInteger256::new([
-        0xE4BBB2A59119AE7B,
-        0x2E989DA636B63B23 ,
-        0xF1D7FBB748E003F7,
-        0x00A166C8CFB199DD ]);
+        0xE4BBB2A5_9119AE7B,
+        0x2E989DA6_36B63B23 ,
+        0xF1D7FBB7_48E003F7,
+        0x00A166C8_CFB199DD ]);
     println!("B1 normal : {}", B1);
     println!("B1 : {:?}", B1);
 
@@ -402,6 +407,25 @@ fn test_big_integer(){
 
     let window_size = Fr::from(256u64);
     println!("window_size: {}", window_size);
+    println!("window_size inspect: {:?}", window_size.to_bigint());
+    println!("window_size in bytes le:{:?}", window_size.to_bigint().to_bytes_le());
+    // let test_B = BigInteger256::new([0,0,0,0x0000000000000001]);
+    let test_B = BigInteger256::from(1);
+    println!("test_B: {}", test_B);
+    let test_B_int = test_B.to_biguint();
+    println!("{}", test_B.0[0]);
+    println!("{}", test_B.0[1]);
+    println!("{}", test_B.0[2]);
+    println!("{}", test_B.0[3]);
+    println!("to bytes le: {:?}", test_B.to_bytes_le());
+    println!("physically store sequence:");
+    println!("{:016X}", test_B.0[0]);
+    println!("{:?}", test_B.0[1]);
+    println!("{:?}", test_B.0[2]);
+    println!("{:?}", test_B.0[3]);
+
+    // println!(("test_B {:?}", test_B.to_bigint()));
+
 
     for byte in remaining_bytes{
         fp1 = fp1 * window_size;
