@@ -415,7 +415,6 @@ macro_rules! impl_field_from_random_bytes_with_flags {
                     let flags_mask = u8::MAX.checked_shl(8 - (F::BIT_SIZE as u32)).unwrap_or(0);
                     println!("flags_mask: {}", flags_mask);
 
-
                     // Mask away the remaining bytes, and try to reconstruct the
                     // flag
                     let mut flags: u8 = 0;
@@ -436,21 +435,16 @@ macro_rules! impl_field_from_random_bytes_with_flags {
                     // let result = Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
                     // .ok()
                     // .and_then(|f| F::from_u8(flags).map(|flag| (f, flag)));
-                    
 
-                    Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)])
-                        .ok()
-                        .and_then(|f| {
+                    Self::deserialize_uncompressed(&result_bytes[..($u64_limbs * 8)]).ok().and_then(|f| {
+                        println!("f: {:?}", f);
+                        F::from_u8(flags).map(|flag| {
                             println!("f: {:?}", f);
-                            F::from_u8(flags).map(|flag| {
-                                println!("f: {:?}", f);
-                                // println!("flag: {}", flag.to_le_bytes());
-                                // return f and EmptyFlag,
-                                (f, flag)
+                            // println!("flag: {}", flag.to_le_bytes());
+                            // return f and EmptyFlag,
+                            (f, flag)
                         })
-                        })
-                    
-                    
+                    })
                 })
                 .flatten()
         }
