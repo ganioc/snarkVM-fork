@@ -400,6 +400,7 @@ fn test_big_integer() {
     let mut fp1 = Fr::from_bigint(B1).unwrap();
     // println!("fp1 normal: {}", fp1.ok_or(err).unwrap());
     println!("fp1: {:?}", fp1);
+    println!("fp1, bytes le: {:?}", fp1.to_bigint().to_bytes_le());
     // fp1.AddAssign(1);
     // fp1.add(1); 不能加integer,
     // println!("fp1 size in bits {}", fp1.size_in_bits());
@@ -416,8 +417,17 @@ fn test_big_integer() {
     println!(" 。0 {}", window_size.0);
     println!(" debug {:?}", window_size.0);
 
-    // let window_size_2 = BigInteger256::from(256u64);
-    // let wdsize = Fr::from(window_size_2::to_bigint());
+    let window_size_2 = BigInteger256::from(256u64);
+    let wdsize = Fr::from_bigint(window_size_2);
+    println!("window_size: {:?}", wdsize.unwrap());
+    println!("window_size inspect: {:?}", wdsize.unwrap().to_bigint());
+    println!("{:?}", wdsize.unwrap().0);
+    println!("window_size in bytes le:{:?}", wdsize.unwrap().to_bigint().to_bytes_le());
+
+    // println!("window_size inspect: {:?}", wdsize.to_bigint());
+    // println!("window_size in bytes le:{:?}", wdsize.to_bigint().to_bytes_le());
+    // println!(" 。0 {}", wdsize.0);
+    // println!(" debug {:?}", wdsize.0);
 
     // let test_B = BigInteger256::new([0,0,0,0x0000000000000001]);
     let test_B = BigInteger256::from(1);
