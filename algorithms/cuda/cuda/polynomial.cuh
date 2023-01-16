@@ -32,6 +32,9 @@ void host_print_fr(fr_t f) {
     f.store((limb_t*)val);
     printf("0x%016lx%016lx%016lx%016lx\n", val[3], val[2], val[1], val[0]);
 }
+
+// uint64_t *val = (uint64_t*)scalar; // fr_t *
+
 #endif
 
 __global__
