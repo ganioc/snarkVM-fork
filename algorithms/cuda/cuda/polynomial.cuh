@@ -33,6 +33,10 @@ void host_print_fr(fr_t f) {
     printf("0x%016lx%016lx%016lx%016lx\n", val[3], val[2], val[1], val[0]);
 }
 
+void host_rawprint_fr(fr_t f) {
+    uint64_t *val = (uint64_t*)&f;
+    printf("0x%016lx%016lx%016lx%016lx\n", val[3], val[2], val[1], val[0]);
+}
 // uint64_t *val = (uint64_t*)scalar; // fr_t *
 
 #endif
