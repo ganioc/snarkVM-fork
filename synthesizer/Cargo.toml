@@ -42,8 +42,12 @@ parallel = [
   "snarkvm-utilities/parallel"
 ]
 aleo-cli = [ ]
+cuda = [ "snarkvm-algorithms/cuda" ]
 setup = [ ]
 timer = [ "aleo-std/timer" ]
+
+[dependencies]
+num-bigint = "0.4.3"
 
 [dependencies.circuit]
 package = "snarkvm-circuit"
@@ -57,7 +61,11 @@ version = "0.9.10"
 
 [dependencies.snarkvm-algorithms]
 path = "../algorithms"
+
 version = "0.9.10"
+
+features = ["cuda"]
+
 
 [dependencies.snarkvm-curves]
 path = "../curves"
